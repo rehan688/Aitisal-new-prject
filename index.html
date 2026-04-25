@@ -311,7 +311,72 @@ button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
   .hero-right{flex:0 0 460px}
   .hero-image-wrap{max-width:460px}
 }
+/* MOBILE TESTIMONIAL FIX */
 
+@media(max-width:768px){
+
+.testimonial-box{
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:30px 25px;
+gap:20px;
+border-radius:20px;
+}
+
+.testimonial-img{
+display:block !important;
+width:100%;
+text-align:center;
+}
+
+.testimonial-img img{
+height:auto;
+max-width:180px;
+margin:auto;
+}
+
+.testimonial-text{
+text-align:left;
+width:100%;
+}
+
+.testimonial-text h3{
+font-size:42px;
+line-height:1.2;
+margin-bottom:20px;
+}
+
+.testimonial-text .attr{
+font-size:22px;
+}
+
+.char-sep1{
+margin:20px 0;
+}
+
+}
+
+@media(max-width:480px){
+
+.testimonial-box{
+padding:25px 20px;
+}
+
+.testimonial-img img{
+max-width:150px;
+}
+
+.testimonial-text h3{
+font-size:30px;
+line-height:1.25;
+}
+
+.testimonial-text .attr{
+font-size:18px;
+}
+
+}
 </style>
 </head>
 <body>
