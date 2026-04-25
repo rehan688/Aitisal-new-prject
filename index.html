@@ -219,29 +219,110 @@ button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
   .nav-dropdown--wide{min-width:560px}
   .nav-dropdown--med{min-width:360px}
 }
+/* ===== MOBILE HEADER & NAVIGATION IMPROVEMENTS ===== */
 @media(max-width:1023px){
-  .container-fluid{padding:0 1.5rem}
-  .header-inner .container-fluid{height:64px}
-  #header-logo{width:130px}
-  #content{padding-top:64px}
+  /* Better mobile header spacing */
+  .header-inner .container-fluid{
+    min-height:64px;
+    padding:0 12px;
+  }
 
-  /* ===== HAMBURGER — pinned to far right ===== */
-  .mobile-menu-btn,.mobile-close-btn{display:flex}
+  #header-logo{
+    width:120px;
+  }
 
-  .nav-links{display:none;position:fixed;top:0;right:0;bottom:0;width:min(320px,85vw);background:#fff;flex-direction:column;height:100vh;height:100dvh;padding:0 0 2rem;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:999;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-  .nav-links.open{display:flex;transform:translateX(0)}
-  .nav-item{height:auto;flex-direction:column;align-items:stretch;width:100%}
-  .nav-link,.nav-link-plain{padding:15px 1.5rem;height:auto;font-size:1rem;justify-content:space-between;border-bottom:1px solid #f0f0f0}
-  .nav-link .arrow{font-size:.65em}
-  .nav-dropdown,.nav-dropdown--wide,.nav-dropdown--med{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;min-width:100%;border-radius:0;display:none;grid-template-columns:1fr;padding:0;background:#f9f9f9;border-bottom:1px solid #eee}
-  .nav-item.open .nav-dropdown,.nav-item.open .nav-dropdown--wide,.nav-item.open .nav-dropdown--med{display:block}
-  .nav-dropdown .dropdown-col-title{padding:10px 1.5rem 4px;font-size:.68rem}
-  .nav-dropdown .dropdown-divider{margin:4px 1.5rem}
-  .nav-dropdown .dropdown-link{padding:12px 1.5rem;font-size:.95rem;border-bottom:1px solid #eee}
-  .nav-dropdown .dropdown-link:hover{background:#f0f0f0;padding-left:1.5rem}
-  .nav-dropdown .dropdown-link .dl-arrow{opacity:.3;transform:none}
-  .nav-cta{margin:20px 1.5rem 0;text-align:center;display:block;width:calc(100% - 3rem);padding:14px;font-size:.9rem}
-  .nav-link-plain{border-bottom:1px solid #f0f0f0}
+  /* Mobile menu improvements */
+  .mobile-menu-btn{
+    width:48px;
+    height:48px;
+    min-width:48px;
+    min-height:48px;
+    border-radius:8px;
+  }
+
+  /* Navigation sidebar improvements */
+  .nav-links{
+    scrollbar-width:thin;
+  }
+
+  .nav-links::-webkit-scrollbar{
+    width:4px;
+  }
+
+  .nav-links::-webkit-scrollbar-track{
+    background:#f0f0f0;
+  }
+
+  .nav-links::-webkit-scrollbar-thumb{
+    background:#ccc;
+    border-radius:2px;
+  }
+
+  /* Better mobile nav item spacing */
+  .nav-item{
+    padding:0;
+  }
+
+  .nav-link,
+  .nav-link-plain{
+    min-height:48px;
+    padding:12px 16px;
+    font-size:1rem;
+  }
+
+  /* Mobile dropdown spacing */
+  .nav-dropdown,
+  .nav-dropdown--wide,
+  .nav-dropdown--med{
+    padding:8px 0;
+  }
+
+  .dropdown-link{
+    min-height:44px;
+    padding:12px 16px;
+    font-size:0.95rem;
+  }
+
+  /* CTA button in mobile menu */
+  .nav-cta{
+    margin:16px 12px 0;
+    min-height:48px;
+    font-size:0.85rem;
+  }
+
+  /* Close button improvements */
+  .mobile-close-btn{
+    width:48px;
+    height:48px;
+    min-width:48px;
+    min-height:48px;
+  }
+}
+
+@media(max-width:639px){
+  .header-inner .container-fluid{
+    padding:0 12px;
+  }
+
+  #header-logo{
+    width:100px;
+  }
+
+  .mobile-menu-btn,
+  .mobile-close-btn{
+    width:44px;
+    height:44px;
+    min-width:44px;
+    min-height:44px;
+  }
+
+  .mobile-menu-btn svg,
+  .mobile-close-btn svg{
+    width:20px;
+    height:20px;
+  }
+}
+
 
   /* ===== TESTIMONIAL — tablet fix ===== */
   .testimonial-box{flex-direction:column;gap:1.5rem;padding:2rem 1.5rem}
@@ -311,102 +392,500 @@ button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
   .hero-right{flex:0 0 460px}
   .hero-image-wrap{max-width:460px}
 }
-/* ===== MOBILE FIX ADD BELOW YOUR CURRENT CSS ===== */
-
-@media (max-width:768px){
-
+/* ===== COMPREHENSIVE MOBILE RESPONSIVE IMPROVEMENTS ===== */
+/* Ensure safe areas and proper scrolling on mobile */
 html,body{
-overflow-x:hidden;
-width:100%;
+  -webkit-text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
 }
 
-.container-fluid{
-padding:0 20px;
+body{
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
 }
 
-.hero-inner{
-flex-direction:column;
-text-align:center;
-gap:30px;
+/* Ensure buttons and interactive elements have minimum touch target of 44-48px */
+button,a{
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  -webkit-tap-highlight-color:rgba(0,0,0,.1);
 }
 
-.hero-left h2{
-font-size:42px;
-line-height:1;
+/* Better mobile form handling */
+input,select,textarea{
+  font-size:16px;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
 }
 
-.hero-desc{
-font-size:18px;
-max-width:100%;
+input[type="submit"],button{
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
 }
 
-.hero-btn{
-width:100%;
-max-width:280px;
+/* Tablet adjustments (768px and below) */
+@media(max-width:768px){
+  html,body{
+    overflow-x:hidden;
+    width:100%;
+  }
+
+  .container-fluid{
+    padding:0 20px;
+  }
+
+  /* Hero Section Mobile */
+  .hero-section{
+    min-height:auto;
+    padding:2rem 0;
+  }
+
+  .hero-inner{
+    flex-direction:column;
+    text-align:center;
+    gap:30px;
+  }
+
+  .hero-left h2{
+    font-size:clamp(2.2rem,5vw,3.5rem);
+    line-height:1.1;
+    letter-spacing:-.025em;
+  }
+
+  .hero-left .hero-desc{
+    font-size:clamp(1rem,2.5vw,1.2rem);
+    max-width:100%;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .hero-btn{
+    width:100%;
+    max-width:280px;
+    min-height:48px;
+    padding:1rem 2rem;
+    font-size:0.95rem;
+  }
+
+  .hero-right{
+    width:100%;
+    max-width:320px;
+    flex:none;
+  }
+
+  .hero-image-wrap{
+    border-radius:20px;
+  }
+
+  /* Testimonial Section Mobile */
+  .testimonial-box-section{
+    padding:2rem 0;
+  }
+
+  .testimonial-box{
+    flex-direction:column;
+    padding:20px 16px;
+    text-align:center;
+    gap:1.5rem;
+    border-radius:16px;
+  }
+
+  .testimonial-text h3{
+    font-size:clamp(1.2rem,4vw,1.8rem);
+    line-height:1.3;
+  }
+
+  .testimonial-img{
+    display:none;
+  }
+
+  /* Platform Grid Mobile */
+  .platform-section{
+    padding:2rem 0 2rem;
+  }
+
+  .platform-top h3{
+    font-size:clamp(2rem,5vw,2.8rem);
+  }
+
+  .platform-top p{
+    font-size:clamp(0.95rem,2.5vw,1.1rem);
+  }
+
+  .platform-grid{
+    grid-template-columns:1fr;
+    gap:1.5rem;
+  }
+
+  .platform-card{
+    padding:1.5rem;
+  }
+
+  .platform-card h3.card-title{
+    font-size:clamp(1.8rem,4vw,2.4rem);
+  }
+
+  .platform-card ul li{
+    font-size:0.95rem;
+  }
+
+  /* Slider Mobile */
+  .logo-slider-section{
+    padding:2rem 0;
+  }
+
+  .logo-slider-heading h2{
+    font-size:clamp(1.6rem,4vw,2rem);
+  }
+
+  .slider-card{
+    flex:0 0 calc((100% - 0.8rem)/2);
+    height:12rem;
+    border-radius:8px;
+  }
+
+  .slider-track{
+    gap:0.8rem;
+  }
+
+  /* Case Studies Mobile */
+  .case-studies-section{
+    padding:2rem 0;
+  }
+
+  .case-studies-heading h2{
+    font-size:clamp(1.6rem,4vw,2rem);
+  }
+
+  .cs-card{
+    flex:0 0 85%;
+  }
+
+  .cs-stat-num{
+    font-size:2.2rem;
+  }
+
+  /* Review Section Mobile */
+  .review-section{
+    padding:2rem 0;
+  }
+
+  .review-bg{
+    padding:1.5rem;
+    border-radius:16px;
+    min-height:280px;
+  }
+
+  .review-inner blockquote{
+    font-size:clamp(1rem,2.5vw,1.2rem);
+    line-height:1.5;
+  }
+
+  /* Form Section Mobile */
+  .form-section{
+    padding:2rem 0;
+  }
+
+  .form-outer{
+    flex-direction:column;
+    border-radius:16px;
+  }
+
+  .form-left{
+    flex:none;
+    padding:1.5rem;
+    text-align:center;
+  }
+
+  .form-left h2{
+    font-size:clamp(1.8rem,4vw,2.2rem);
+    line-height:1.2;
+  }
+
+  .form-right{
+    flex:1;
+    padding:1.5rem;
+  }
+
+  .form-card{
+    padding:1.5rem;
+  }
+
+  .form-card input,
+  .form-card select{
+    min-height:44px;
+    font-size:16px;
+    padding:0.75rem 0.9rem;
+    border-radius:8px;
+  }
+
+  .form-card label{
+    font-size:0.85rem;
+  }
+
+  .form-card .submit-btn{
+    min-height:48px;
+    font-size:0.9rem;
+    padding:1rem;
+  }
+
+  .form-row{
+    flex-direction:column;
+    gap:0.8rem;
+  }
+
+  /* FAQ Section Mobile */
+  .faq-section{
+    padding:2rem 0 2.5rem;
+  }
+
+  .faq-heading h3{
+    font-size:clamp(2rem,5vw,2.6rem);
+  }
+
+  .faq-header button{
+    min-height:48px;
+    font-size:1rem;
+    padding:1rem 0;
+  }
+
+  .faq-body-inner p{
+    font-size:0.95rem;
+    line-height:1.6;
+  }
+
+  /* Footer Mobile */
+  .f3__sitemap{
+    grid-template-columns:1fr;
+    gap:1.5rem 1.2rem;
+  }
+
+  .f3__col-title{
+    font-size:1rem;
+  }
+
+  .f3__col ul li a{
+    font-size:0.9rem;
+  }
+
+  .f3__bar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:1rem;
+  }
+
+  .f3__bar-right{
+    width:100%;
+    flex-direction:column;
+    align-items:stretch;
+    gap:0.8rem;
+  }
+
+  .f3__bar-right .f-btn{
+    text-align:center;
+    min-height:44px;
+    padding:0.75rem 1.3rem;
+  }
+
+  .f3__legal{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:1rem;
+  }
+
+  .f3__legal-links{
+    gap:0.3rem 0.8rem;
+  }
 }
 
-.hero-right{
-width:100%;
-max-width:320px;
-}
-
-.testimonial-box{
-flex-direction:column;
-padding:30px 20px;
-text-align:center;
-}
-
-.testimonial-img{
-display:none;
-}
-
-.platform-grid{
-grid-template-columns:1fr;
-}
-
-.slider-card{
-flex:0 0 80%;
-}
-
-.cs-card{
-flex:0 0 90%;
-}
-
-.form-outer{
-flex-direction:column;
-}
-
-.form-row{
-flex-direction:column;
-}
-
-.f3__sitemap{
-grid-template-columns:1fr;
-}
-
-.f3__bar,
-.f3__bar-right,
-.f3__legal{
-flex-direction:column;
-align-items:flex-start;
-}
-
-}
-
+/* Small phones (480px and below) */
 @media(max-width:480px){
+  .container-fluid{
+    padding:0 16px;
+  }
 
-.hero-left h2{
-font-size:34px;
+  html,body{
+    font-size:15px;
+  }
+
+  .hero-left h2{
+    font-size:1.8rem;
+    line-height:1.15;
+  }
+
+  .hero-desc{
+    font-size:0.95rem;
+    line-height:1.5;
+  }
+
+  .hero-btn{
+    width:100%;
+    max-width:none;
+    min-height:48px;
+    padding:0.9rem 1.8rem;
+    font-size:0.9rem;
+    border-radius:24px;
+  }
+
+  .hero-right{
+    max-width:280px;
+  }
+
+  .testimonial-box{
+    padding:16px;
+    border-radius:12px;
+  }
+
+  .testimonial-text h3{
+    font-size:1.1rem;
+    line-height:1.3;
+  }
+
+  .testimonial-text .attr{
+    font-size:0.85rem;
+  }
+
+  .platform-grid{
+    gap:1.2rem;
+  }
+
+  .platform-card{
+    padding:1.2rem;
+  }
+
+  .platform-card h3.card-title{
+    font-size:1.6rem;
+  }
+
+  .platform-card ul li{
+    font-size:0.9rem;
+  }
+
+  .platform-top h3{
+    font-size:1.8rem;
+  }
+
+  .platform-top p{
+    font-size:0.95rem;
+  }
+
+  .logo-slider-heading h2{
+    font-size:1.3rem;
+  }
+
+  .slider-card{
+    flex:0 0 100%;
+    height:11rem;
+  }
+
+  .case-studies-heading h2{
+    font-size:1.3rem;
+  }
+
+  .cs-card{
+    flex:0 0 100%;
+  }
+
+  .cs-stat-num{
+    font-size:2rem;
+  }
+
+  .review-bg{
+    padding:1.2rem;
+    border-radius:12px;
+    min-height:250px;
+  }
+
+  .review-inner blockquote{
+    font-size:1rem;
+    line-height:1.4;
+  }
+
+  .faq-heading h3{
+    font-size:1.6rem;
+  }
+
+  .faq-header button{
+    font-size:0.95rem;
+    padding:0.8rem 0;
+  }
+
+  .form-left h2{
+    font-size:1.4rem;
+  }
+
+  .form-left p{
+    font-size:0.9rem;
+  }
+
+  .form-right{
+    padding:1.2rem;
+  }
+
+  .form-card{
+    padding:1.2rem;
+  }
+
+  .form-card input,
+  .form-card select{
+    min-height:44px;
+    font-size:16px;
+  }
+
+  .form-card .submit-btn{
+    min-height:48px;
+    font-size:0.85rem;
+  }
+
+  .f3__sitemap{
+    grid-template-columns:1fr;
+  }
+
+  .f3__col-title{
+    font-size:0.95rem;
+  }
+
+  .f3__bar-right{
+    gap:0.6rem;
+  }
+
+  .f3__bar-right .f-btn{
+    width:100%;
+    min-height:44px;
+    font-size:0.8rem;
+  }
 }
 
-.hero-desc{
-font-size:16px;
-}
+/* Extra small screens (under 375px) */
+@media(max-width:374px){
+  .container-fluid{
+    padding:0 12px;
+  }
 
-.faq-heading h3{
-font-size:36px;
-}
+  .hero-left h2{
+    font-size:1.5rem;
+  }
 
+  .hero-btn{
+    padding:0.8rem 1.5rem;
+    font-size:0.85rem;
+  }
+
+  .platform-card h3.card-title{
+    font-size:1.4rem;
+  }
+
+  .testimonial-text h3{
+    font-size:1rem;
+  }
+
+  .faq-heading h3{
+    font-size:1.3rem;
+  }
 }
 </style>
 </head>
