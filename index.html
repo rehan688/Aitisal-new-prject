@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Commission-Free Online Ordering for Restaurants | ChowNow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Condensed:wght@400;500;600;700&family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{width:100%;max-width:100%;overflow-x:hidden;overflow-y:scroll;font-family:'Roboto',Arial,sans-serif;font-weight:400;color:#161616;background:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.5}
+body.menu-open{overflow:hidden;position:fixed;width:100%}
+img{max-width:100%;display:block;height:auto}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+
+.container-fluid{width:100%;max-width:1400px;margin:0 auto;padding:0 3.5rem}
+
+.char-sep{width:100%;overflow:hidden;line-height:1;font-family:'IBM Plex Condensed',sans-serif;color:#161616;font-size:14px;margin:0;user-select:none}
+.char-sep .char-sep-inner{overflow:hidden;white-space:nowrap}
+.char-sep[data-char=" ~ "],.char-sep1{color:#999;font-size:12px;margin:1.2rem 0}
+
+#header{position:fixed;top:0;left:0;right:0;z-index:1000;background:#fff;padding-top:env(safe-area-inset-top,0)}
+#header.scrolled{box-shadow:0 1px 10px rgba(0,0,0,.06)}
+.header-inner .container-fluid{display:flex;align-items:center;justify-content:space-between;height:72px}
+#header-logo-a{display:flex;align-items:center;flex-shrink:0}
+#header-logo{width:150px;height:auto}
+.nav-links{display:flex;align-items:center;gap:0;height:100%}
+.nav-item{position:relative;height:100%;display:flex;align-items:center}
+.nav-link{font-family:'Roboto',sans-serif;font-size:.95rem;font-weight:500;padding:0 15px;color:#161616;height:100%;display:flex;align-items:center;gap:4px;transition:color .2s;white-space:nowrap;letter-spacing:.01em}
+.nav-link:hover{color:#555}
+.nav-link .arrow{font-size:.5em;opacity:.5;transition:transform .3s}
+.nav-item:hover .nav-link .arrow,.nav-item.open .nav-link .arrow{transform:rotate(180deg)}
+.nav-link-plain{font-family:'Roboto',sans-serif;font-size:.95rem;font-weight:500;padding:0 15px;color:#161616;height:100%;display:flex;align-items:center;transition:color .2s;white-space:nowrap;letter-spacing:.01em}
+.nav-link-plain:hover{color:#555}
+.nav-cta{margin-left:14px;background:#161616;color:#fff;padding:10px 24px;border-radius:30px;font-family:'Roboto',sans-serif;font-size:.82rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;transition:background .2s;white-space:nowrap;line-height:1;height:auto}
+.nav-cta:hover{background:#333}
+
+.nav-dropdown{position:absolute;top:100%;left:0;min-width:260px;background:#fff;border-radius:0 0 12px 12px;box-shadow:0 12px 40px rgba(0,0,0,.12),0 2px 8px rgba(0,0,0,.06);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .25s ease,transform .25s ease,visibility .25s;z-index:100;padding:8px 0}
+.nav-item:hover .nav-dropdown,.nav-item.open .nav-dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.dropdown-col-title{font-family:'IBM Plex Condensed',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#999;padding:12px 20px 6px;pointer-events:none}
+.dropdown-divider{height:1px;background:#eee;margin:6px 20px}
+.dropdown-link{display:flex;align-items:center;justify-content:space-between;padding:9px 20px;font-size:.92rem;font-weight:400;color:#444;transition:all .15s}
+.dropdown-link:hover{color:#161616;background:#f7f7f7;padding-left:24px}
+.dropdown-link .dl-arrow{font-size:.75em;opacity:0;transform:translateX(-4px);transition:all .15s;color:#161616}
+.dropdown-link:hover .dl-arrow{opacity:1;transform:translateX(0)}
+.nav-dropdown--wide{min-width:680px;left:50%;transform:translateX(-50%) translateY(-6px);display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-radius:0 0 16px 16px;padding:12px 0}
+.nav-item:hover .nav-dropdown--wide,.nav-item.open .nav-dropdown--wide{transform:translateX(-50%) translateY(0)}
+.dropdown-col{padding:0 8px}
+.dropdown-col .dropdown-col-title{padding:8px 16px 8px}
+.dropdown-col .dropdown-link{padding:8px 16px;border-radius:8px;margin:0 4px}
+.dropdown-col .dropdown-link:hover{background:#f0f0f0;padding-left:20px}
+.nav-dropdown--med{min-width:420px;left:50%;transform:translateX(-50%) translateY(-6px);display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:0 0 16px 16px;padding:12px 0}
+.nav-item:hover .nav-dropdown--med,.nav-item.open .nav-dropdown--med{transform:translateX(-50%) translateY(0)}
+.nav-dropdown--med .dropdown-col{padding:0 8px}
+.nav-dropdown--med .dropdown-col .dropdown-col-title{padding:8px 16px 8px}
+.nav-dropdown--med .dropdown-col .dropdown-link{padding:8px 16px;border-radius:8px;margin:0 4px}
+.nav-dropdown--med .dropdown-col .dropdown-link:hover{background:#f0f0f0;padding-left:20px}
+
+#content{padding-top:72px}
+
+.hero-section{min-height:calc(100vh - 72px);display:flex;align-items:center;padding:2rem 0}
+.hero-inner{display:flex;align-items:center;gap:3.5rem;width:100%}
+.hero-left{flex:1;min-width:0}
+.hero-left h2{font-family:'Roboto',sans-serif;font-weight:500;font-size:clamp(3.2rem,6.5vw,6.2rem);line-height:.96;letter-spacing:-.032em;color:#161616;margin-bottom:1.8rem}
+.hero-left .hero-desc{font-size:clamp(1.05rem,1.5vw,1.3rem);color:#444;line-height:1.6;margin-bottom:2.4rem;max-width:540px}
+.hero-btn{display:inline-block;background:#161616;color:#fff;padding:1.1rem 2.6rem;border-radius:30px;font-size:.95rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;transition:background .2s,transform .15s;line-height:1}
+.hero-btn:hover{background:#333;transform:translateY(-2px)}
+.hero-btn:active{transform:translateY(0);background:#000}
+.hero-right{flex:0 0 400px;display:flex;align-items:center;justify-content:center}
+.hero-image-wrap{position:relative;width:100%;max-width:400px;border-radius:24px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.14),0 6px 20px rgba(0,0,0,.08)}
+.hero-image-wrap img{width:100%;height:auto;display:block}
+.hero-image-badge{position:absolute;bottom:14px;left:14px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.hero-image-badge .badge-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse-dot 2s infinite}
+.hero-image-badge span{font-size:.82rem;font-weight:600;color:#161616}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+.testimonial-box-section{padding:3rem 0}
+.testimonial-box{background:#b6e4ef;border-radius:16px;padding:2.5rem 3rem;display:flex;align-items:center;gap:2.5rem}
+.testimonial-text{flex:1;min-width:0}
+.testimonial-text h3{font-family:'Roboto',sans-serif;font-weight:400;font-size:2.1rem;line-height:1.3;color:#161616;margin-bottom:.5rem}
+.testimonial-text .attr{font-size:1rem;color:#333;margin-top:.8rem}
+.testimonial-img{flex:0 0 auto;text-align:right}
+.testimonial-img img{height:140px;width:auto;margin-left:auto}
+
+.platform-section{padding:0 0 3rem}
+.platform-top{text-align:center;margin-bottom:2.5rem}
+.platform-top h3{font-family:'IBM Plex Condensed',sans-serif;font-size:3.5rem;font-weight:400;line-height:1.05;letter-spacing:-.01em;margin-bottom:.8rem}
+.platform-top p{font-size:1.15rem;color:#555;max-width:780px;margin:0 auto;line-height:1.5}
+.platform-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+.platform-card{transition:transform .3s ease}
+.platform-card:hover{transform:scale(1.02)}
+.platform-card .card-img{width:100%;padding-top:52%;border-radius:10px;background-size:cover;background-position:center;margin-bottom:1.2rem;background-color:#e0e0e0}
+.platform-card h3.card-title{font-family:'Roboto',sans-serif;font-weight:400;font-size:2.6rem;line-height:1.1;margin-bottom:.5rem}
+.platform-card hr{border:none;border-top:1px solid #E5E5E5;margin:.8rem 0}
+.platform-card h3.card-sub{font-family:'Roboto',sans-serif;font-weight:400;font-size:1.25rem;line-height:1.3;text-align:left;margin-bottom:.5rem}
+.platform-card ul{list-style:disc;padding-left:1.3rem;text-align:left;font-size:.95rem;line-height:1.3}
+.platform-card ul li{margin-bottom:.5rem;color:#333}
+.platform-card .learn-more{display:block;margin-top:1.2rem;font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#191919;padding:.5rem 0;transition:opacity .2s}
+.platform-card .learn-more:hover{opacity:.6}
+
+.logo-slider-section{padding:0 0 3rem}
+.logo-slider-heading{text-align:center;margin-bottom:2.5rem}
+.logo-slider-heading h2{font-family:'Roboto',sans-serif;font-weight:400;font-size:2.3rem;color:#161616}
+.slider-outer{position:relative;overflow:hidden;-webkit-overflow-scrolling:touch}
+.slider-track{display:flex;gap:1.25rem;transition:transform .5s cubic-bezier(.25,.8,.25,1);will-change:transform}
+.slider-card{flex:0 0 calc((100% - 4 * 1.25rem)/5);min-width:0;height:14rem;border:1.5px solid #161616;border-radius:1rem;background:#fff;display:flex;align-items:center;justify-content:center;padding:1.2rem}
+.slider-card .logo-placeholder{font-family:'Roboto',sans-serif;font-weight:600;font-size:1.15rem;color:#161616;text-align:center}
+.slider-nav{display:flex;justify-content:center;gap:.8rem;margin-top:1.6rem}
+.slider-nav button{width:3rem;height:3rem;border-radius:50%;background:#161616;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .1s;-webkit-tap-highlight-color:transparent}
+.slider-nav button:hover{background:#333}
+.slider-nav button:active{background:#000;transform:scale(.9)}
+.slider-nav button svg{width:1.2rem;height:1.2rem;fill:#fff;pointer-events:none}
+
+.case-studies-section{padding:0 0 3rem}
+.case-studies-heading{text-align:center;padding:2.5rem 0 1rem}
+.case-studies-heading h2{font-family:'Roboto',sans-serif;font-weight:400;font-size:2.3rem;color:#161616}
+.cs-track{display:flex;gap:1.5rem;transition:transform .5s cubic-bezier(.25,.8,.25,1);will-change:transform}
+.cs-card{flex:0 0 calc((100% - 2 * 1.5rem)/3);min-width:0;text-decoration:none;color:#161616}
+.cs-card-img{width:100%;padding-top:54%;border-radius:12px;background-size:cover;background-position:center;margin-bottom:1rem;background-color:#ddd}
+.cs-card h3{font-family:'Roboto',sans-serif;font-weight:500;font-size:1.05rem;line-height:1.3;margin-bottom:.7rem;display:flex;align-items:center;gap:.4rem}
+.cs-card h3 .arrow-r{font-size:.8em;transition:transform .2s}
+.cs-card:hover h3 .arrow-r{transform:translateX(4px)}
+.cs-stat{display:flex;gap:.8rem;align-items:flex-start}
+.cs-stat-num{font-family:'IBM Plex Condensed',sans-serif;font-size:3rem;font-weight:600;line-height:1;letter-spacing:-.02em;white-space:nowrap}
+.cs-stat-text{font-size:.95rem;line-height:1.35;padding-top:.2rem}
+
+.review-section{padding:0 0 3rem}
+.review-bg{border-radius:20px;padding:3rem 2rem;background-size:cover;background-position:center;position:relative;min-height:340px;display:flex;align-items:center;justify-content:center}
+.review-bg::before{content:'';position:absolute;inset:0;border-radius:20px;background:rgba(0,0,0,.45)}
+.review-inner{position:relative;z-index:2;max-width:780px;text-align:center;color:#fff}
+.review-icon{margin-bottom:.7rem}
+.review-icon svg{width:26px;height:26px;margin:0 auto;filter:brightness(0) invert(1)}
+.review-stars{display:flex;gap:4px;justify-content:center;margin-bottom:1rem}
+.review-stars span{width:16px;height:16px;background:#fff;border-radius:2px;display:block}
+.review-inner blockquote{font-size:1.2rem;line-height:1.6;font-weight:300;margin-bottom:1rem}
+.review-inner .review-author a{color:#fff;font-weight:500;font-size:.95rem;display:inline-flex;align-items:center;gap:8px;transition:opacity .2s}
+.review-inner .review-author a:hover{opacity:.8}
+
+.form-section{padding:0 0 3rem}
+.form-outer{background:#b9e3c6;border-radius:20px;display:flex;align-items:flex-start;overflow:hidden}
+.form-left{flex:0 0 38%;padding:3rem;display:flex;flex-direction:column;justify-content:center}
+.form-left h2{font-family:'Roboto',sans-serif;font-weight:400;font-size:2.6rem;line-height:1.1;letter-spacing:-.02em;color:#161616;margin-bottom:.7rem}
+.form-left p{font-size:1.05rem;color:#333;line-height:1.5}
+.form-right{flex:1;padding:2rem 2.5rem;display:flex;align-items:center}
+.form-card{background:#fff;border-radius:12px;padding:2rem;width:100%;max-width:460px}
+.form-card .form-group{margin-bottom:.8rem}
+.form-card label{display:block;font-size:.8rem;font-weight:500;margin-bottom:.3rem;color:#333}
+.form-card input,.form-card select{width:100%;padding:.75rem .9rem;border:1.5px solid #ddd;border-radius:8px;font-size:16px;font-family:'Roboto',sans-serif;transition:border-color .2s;background:#fff;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:2.2rem}
+.form-card input:focus,.form-card select:focus{outline:none;border-color:#161616}
+.form-card .form-row{display:flex;gap:.8rem}
+.form-card .form-row .form-group{flex:1}
+.form-card .submit-btn{width:100%;padding:.85rem;background:#161616;color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transition:background .2s;-webkit-tap-highlight-color:transparent}
+.form-card .submit-btn:hover{background:#333}
+.form-card .submit-btn:active{background:#000;transform:scale(.98)}
+.form-card .form-disclaimer{font-size:.7rem;color:#999;text-align:center;margin-top:.6rem;line-height:1.3}
+.form-card .form-disclaimer a{text-decoration:underline}
+
+.faq-section{padding:0 0 4rem}
+.faq-heading{text-align:center;margin-bottom:1.5rem}
+.faq-heading h3{font-family:'IBM Plex Condensed',sans-serif;font-size:3.5rem;font-weight:400;line-height:1.05;letter-spacing:-.01em}
+.faq-group{max-width:860px;margin:0 auto}
+.faq-card{border-bottom:1px solid #e5e5e5}
+.faq-card:last-child{border-bottom:none}
+.faq-header button{width:100%;text-align:left;padding:1.1rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:1.1rem;font-weight:500;color:#161616;-webkit-tap-highlight-color:transparent}
+.faq-header .faq-icon{flex-shrink:0;width:22px;height:22px;position:relative}
+.faq-header .faq-icon::before,.faq-header .faq-icon::after{content:'';position:absolute;background:#161616;transition:transform .3s}
+.faq-header .faq-icon::before{width:100%;height:2px;top:50%;transform:translateY(-50%)}
+.faq-header .faq-icon::after{width:2px;height:100%;left:50%;transform:translateX(-50%)}
+.faq-card.open .faq-header .faq-icon::after{transform:translateX(-50%) rotate(90deg);opacity:0}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.faq-card.open .faq-body{max-height:500px}
+.faq-body-inner{padding:0 0 1.2rem}
+.faq-body-inner p{font-size:.95rem;line-height:1.6;color:#444}
+.faq-body-inner ul{list-style:disc;padding-left:1.4rem;margin-top:.4rem}
+.faq-body-inner ul li{font-size:.95rem;line-height:1.6;color:#444;margin-bottom:.2rem}
+
+.f3-footer-wrap{background:#fff;padding-bottom:1.5rem;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom,0))}
+.f3{padding-top:1.5rem}
+.f3__sitemap{display:grid;grid-template-columns:1.5fr 1.2fr .8fr 1fr;gap:2.5rem}
+.f3__col-title{font-family:'IBM Plex Condensed',sans-serif;font-size:1.2rem;font-weight:600;letter-spacing:.02em;margin-bottom:1rem;color:#161616}
+.f3__widget-heading{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#888;margin-bottom:.6rem}
+.f3__two{display:flex;gap:1.5rem}
+.f3__stack-right{flex:1}
+.f3__col ul li{margin-bottom:.4rem}
+.f3__col ul li a{font-size:.9rem;color:#444;transition:color .2s;line-height:1.5;display:inline-block}
+.f3__col ul li a:hover{color:#161616}
+.f3__bar{display:flex;align-items:center;justify-content:space-between;padding:1.2rem 0;flex-wrap:wrap;gap:.8rem}
+.f3__bar-right{display:flex;align-items:center;gap:1.2rem}
+.f3__bar-right a{font-size:.9rem;color:#444;transition:color .2s}
+.f3__bar-right a:hover{color:#161616}
+.f3__bar-right .f-btn{background:#161616;color:#fff;padding:.45rem 1.3rem;border-radius:30px;font-weight:600;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;-webkit-tap-highlight-color:transparent}
+.f3__bar-right .f-btn:hover{background:#333;color:#fff}
+.f3__legal{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;padding-top:.4rem}
+.f3__copyright{font-size:.8rem;color:#999}
+.f3__legal-links{display:flex;flex-wrap:wrap;gap:.3rem 1rem}
+.f3__legal-links a{font-size:.8rem;color:#999;transition:color .2s}
+.f3__legal-links a:hover{color:#161616}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+.mobile-menu-btn{display:none;width:48px;height:48px;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;border-radius:8px;transition:background .15s}
+.mobile-menu-btn:active{background:#f0f0f0}
+.mobile-menu-btn svg{width:24px;height:24px;stroke:#161616;stroke-width:2;fill:none;pointer-events:none;transition:transform .3s}
+.mobile-menu-btn.active svg{transform:rotate(90deg)}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998;opacity:0;transition:opacity .3s;-webkit-tap-highlight-color:transparent}
+.mobile-overlay.active{display:block;opacity:1}
+.mobile-close-btn{display:none;position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;background:#f5f5f5;align-items:center;justify-content:center;z-index:1001;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.mobile-close-btn:active{background:#e0e0e0}
+.mobile-close-btn svg{width:20px;height:20px;stroke:#161616;stroke-width:2.5;fill:none;pointer-events:none}
+
+@media(max-width:1100px){
+  .nav-dropdown--wide{min-width:560px}
+  .nav-dropdown--med{min-width:360px}
+}
+@media(max-width:1023px){
+  .container-fluid{padding:0 1.5rem}
+  .header-inner .container-fluid{height:64px}
+  #header-logo{width:130px}
+  #content{padding-top:64px}
+  .hero-section{min-height:calc(100vh - 64px);padding:1.5rem 0 1rem}
+  .hero-right{flex:0 0 300px}
+  .hero-inner{gap:2rem}
+  .testimonial-box{flex-direction:column;gap:1.5rem;padding:2rem 1.5rem}
+  .testimonial-img{text-align:center}
+  .testimonial-img img{margin:0 auto}
+  .slider-card{flex:0 0 calc((100% - 2 * 1rem)/3)}
+  .cs-card{flex:0 0 calc((100% - 1 * 1.5rem)/2)}
+  .platform-grid{grid-template-columns:repeat(2,1fr);gap:1.5rem}
+  .form-outer{flex-direction:column}
+  .form-left{flex:none;text-align:center;padding:2rem 1.5rem 1rem}
+  .form-left h2{font-size:2rem}
+  .form-right{padding:0 1.5rem 2rem}
+  .mobile-menu-btn,.mobile-close-btn{display:flex}
+  .nav-links{display:none;position:fixed;top:0;right:0;bottom:0;width:min(320px,85vw);background:#fff;flex-direction:column;height:100vh;height:100dvh;padding:0 0 2rem;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:999;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+  .nav-links.open{display:flex;transform:translateX(0)}
+  .nav-item{height:auto;flex-direction:column;align-items:stretch;width:100%}
+  .nav-link,.nav-link-plain{padding:15px 1.5rem;height:auto;font-size:1rem;justify-content:space-between;border-bottom:1px solid #f0f0f0}
+  .nav-link .arrow{font-size:.65em}
+  .nav-dropdown,.nav-dropdown--wide,.nav-dropdown--med{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;min-width:100%;border-radius:0;display:none;grid-template-columns:1fr;padding:0;background:#f9f9f9;border-bottom:1px solid #eee}
+  .nav-item.open .nav-dropdown,.nav-item.open .nav-dropdown--wide,.nav-item.open .nav-dropdown--med{display:block}
+  .nav-dropdown .dropdown-col-title{padding:10px 1.5rem 4px;font-size:.68rem}
+  .nav-dropdown .dropdown-divider{margin:4px 1.5rem}
+  .nav-dropdown .dropdown-link{padding:12px 1.5rem;font-size:.95rem;border-bottom:1px solid #eee}
+  .nav-dropdown .dropdown-link:hover{background:#f0f0f0;padding-left:1.5rem}
+  .nav-dropdown .dropdown-link .dl-arrow{opacity:.3;transform:none}
+  .nav-cta{margin:20px 1.5rem 0;text-align:center;display:block;width:calc(100% - 3rem);padding:14px;font-size:.9rem}
+  .nav-link-plain{border-bottom:1px solid #f0f0f0}
+}
+@media(max-width:639px){
+  .container-fluid{padding:0 1.2rem}
+  .hero-inner{flex-direction:column;text-align:center;gap:2rem}
+  .hero-left .hero-desc{margin-left:auto;margin-right:auto}
+  .hero-right{flex:none;width:100%;max-width:300px}
+  .hero-left h2{font-size:2.4rem;letter-spacing:-.025em;line-height:.98}
+  .hero-btn{padding:1rem 2.2rem;font-size:.9rem}
+  .platform-grid{grid-template-columns:1fr}
+  .platform-top h3{font-size:2.4rem}
+  .platform-top p{font-size:1rem}
+  .platform-card h3.card-title{font-size:2.2rem}
+  .slider-card{flex:0 0 calc((100% - 1 * .8rem)/2);height:12rem}
+  .slider-track{gap:.8rem}
+  .cs-card{flex:0 0 85%}
+  .case-studies-heading h2,.logo-slider-heading h2{font-size:1.8rem}
+  .review-bg{padding:2rem 1.2rem;min-height:280px;border-radius:14px}
+  .review-inner blockquote{font-size:1.05rem}
+  .faq-heading h3{font-size:2.6rem}
+  .faq-header button{font-size:1rem;padding:1rem 0}
+  .testimonial-box{padding:1.5rem 1.2rem}
+  .testimonial-text h3{font-size:1.6rem}
+  .hero-image-badge{bottom:10px;left:10px;padding:8px 12px;border-radius:10px}
+  .hero-image-badge span{font-size:.72rem}
+  .form-card{padding:1.5rem}
+  .f3__sitemap{grid-template-columns:1fr 1fr;gap:1.5rem 1.2rem}
+  .f3__two{flex-direction:column;gap:0}
+  .f3__bar{flex-direction:column;align-items:flex-start;gap:1rem}
+  .f3__bar-right{width:100%;justify-content:space-between}
+  .f3__legal{flex-direction:column;align-items:flex-start}
+  .f3__legal-links{gap:.2rem .8rem}
+}
+@media(max-width:374px){
+  .container-fluid{padding:0 1rem}
+  .hero-left h2{font-size:2rem}
+  .hero-image-badge span{font-size:.65rem}
+  .hero-image-badge{padding:6px 10px}
+  .slider-card{height:10rem}
+  .cs-stat-num{font-size:2.4rem}
+  .form-card .form-row{flex-direction:column;gap:0}
+  .f3__sitemap{grid-template-columns:1fr;gap:1.2rem}
+  .f3__bar-right{flex-direction:column;align-items:flex-start;gap:.6rem}
+}
+@media(min-width:1600px){
+  .container-fluid{padding:0 4rem}
+  .hero-left h2{font-size:6.5rem}
+  .hero-right{flex:0 0 460px}
+  .hero-image-wrap{max-width:460px}
+}
+</style>
+</head>
+<body>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<header id="header">
+  <div class="header-inner">
+    <div class="container-fluid">
+      <a href="#" id="header-logo-a" title="ChowNow">
+        <svg id="header-logo" viewBox="0 0 200 51" fill="none" xmlns="http://www.w3.org/2000/svg"><title>ChowNow</title><circle cx="23.0854" cy="23.2582" r="18.3188" fill="white"/><path d="M65.486 34.8548C70.5136 34.8548 74.1033 32.1641 75.1905 27.8411L71.4413 27.0409C70.7367 29.8591 68.623 31.5584 65.4828 31.5584C61.3511 31.5584 58.2746 28.7083 58.2746 23.3906C58.2746 18.0729 61.3829 15.1909 65.4828 15.1909C68.5912 15.1909 70.8642 17.0176 71.505 20.0272L75.2191 19.227C74.4189 14.7732 70.6698 11.9231 65.4828 11.9231C59.7507 11.9231 54.4648 15.736 54.4648 23.3906C54.4648 31.0451 59.6869 34.858 65.4828 34.858L65.486 34.8548Z" fill="#161616"/><path d="M77.6868 34.5998H81.1777V27.6179C81.1777 23.6775 82.81 21.3406 85.5007 21.3406C87.6782 21.3406 89.0235 22.6541 89.0235 24.7997V34.5998H92.5145V23.9963C92.5145 20.4735 90.1107 18.1972 86.4603 18.1972C84.1872 18.1972 82.2967 19.2237 81.1745 21.2386V11.9167H77.6836V34.5998H77.6868Z" fill="#161616"/><path d="M103.309 34.8548C108.145 34.8548 111.636 31.3639 111.636 26.5276C111.636 21.6913 108.145 18.2004 103.309 18.2004C98.4724 18.2004 94.9814 21.6913 94.9814 26.5276C94.9814 31.3639 98.4405 34.8548 103.309 34.8548ZM98.5043 26.5276C98.5043 23.4192 100.427 21.2418 103.309 21.2418C106.191 21.2418 108.113 23.4192 108.113 26.5276C108.113 29.636 106.159 31.8134 103.309 31.8134C100.459 31.8134 98.5043 29.636 98.5043 26.5276Z" fill="#161616"/><path d="M117.285 34.5997H120.489L123.98 23.3554L127.471 34.5997H130.707L135.671 18.4554H132.116L129.075 29.7316L125.616 18.4554H122.38L118.889 29.7316L115.848 18.4554H112.293L117.289 34.5997H117.285Z" fill="#161616"/><path d="M137.899 34.5998H141.454V18.1366L151.767 34.5998H155.708V12.1781H152.121V28.6731L141.84 12.1781H137.899V34.5998Z" fill="#161616"/><path d="M166.679 34.8548C171.515 34.8548 175.006 31.3639 175.006 26.5276C175.006 21.6913 171.515 18.2004 166.679 18.2004C161.842 18.2004 158.352 21.6913 158.352 26.5276C158.352 31.3639 161.811 34.8548 166.679 34.8548ZM161.874 26.5276C161.874 23.4192 163.797 21.2418 166.679 21.2418C169.561 21.2418 171.483 23.4192 171.483 26.5276C171.483 29.636 169.529 31.8134 166.679 31.8134C163.829 31.8134 161.874 29.636 161.874 26.5276Z" fill="#161616"/><path d="M180.655 34.5997H183.859L187.35 23.3554L190.841 34.5997H194.077L199.04 18.4554H195.486L192.444 29.7316L188.985 18.4554H185.749L182.258 29.7316L179.214 18.4554H175.659L180.658 34.5997H180.655Z" fill="#161616"/><path d="M45.5855 23.2216C45.5855 10.6446 35.508 0.449219 23.0905 0.449219C10.673 0.449219 0.585938 10.6446 0.585938 23.2216C0.585938 23.5436 0.595502 23.8528 0.608254 24.1652C0.585938 25.1727 0.694332 27.4234 1.73045 30.3947C2.67412 33.2799 4.16613 35.9069 6.09491 38.1449C9.16821 42.0152 13.9248 46.1852 21.3084 50.0141C22.421 50.5943 23.744 50.5943 24.8567 50.0141C32.2402 46.1756 37.0096 42.0152 40.0701 38.1449C41.9989 35.9037 43.4909 33.2767 44.4346 30.3947C45.4739 27.4362 45.5791 25.1727 45.5568 24.1652C45.5663 23.8432 45.5791 23.534 45.5791 23.2216H45.5855ZM13.9662 12.9815C14.6963 12.2419 15.8727 12.2738 16.5741 13.0357L21.3211 18.245L19.2648 20.5085L14.03 15.618C13.2681 14.9198 13.2457 13.7211 13.9662 12.9815V12.9815ZM35.8555 31.7656C35.7375 31.8835 35.5494 31.8835 35.4219 31.7656L30.9937 26.6934C30.6876 26.3809 30.1999 26.3809 29.8906 26.6934C29.5846 27.0058 29.5846 27.4968 29.8906 27.8092L34.3603 32.8368C34.5707 33.0504 34.5707 33.417 34.3603 33.6306C34.1499 33.8442 33.7896 33.8442 33.576 33.6306L28.6058 29.1067C28.2998 28.7943 27.812 28.7943 27.5028 29.1067C27.1967 29.4192 27.1967 29.9101 27.5028 30.2226L32.5144 34.705C32.6324 34.8229 32.6324 35.0174 32.5144 35.1449C32.4283 35.231 32.304 35.2533 32.186 35.2214C32.186 35.2214 28.7206 33.9143 26.964 32.1322C25.8832 31.0387 25.3413 29.7188 25.3221 28.4882L25.3126 28.4978C25.303 27.264 25.472 26.4511 24.4231 25.3671L23.1001 24.1238L21.7005 25.4309C20.6516 26.7826 20.8939 27.6944 20.8939 28.7975L20.8843 28.7879C20.862 30.095 20.2914 31.4882 19.1469 32.6487C17.0077 34.8134 13.0449 35.993 11.3265 34.2459C9.5986 32.4988 10.7654 28.4882 12.9046 26.3236C14.0491 25.1663 15.4264 24.5861 16.7175 24.5637L16.708 24.5542C17.7983 24.5446 18.6686 24.7678 19.9502 23.687L29.6451 13.0516C30.3433 12.2897 31.5197 12.2578 32.253 12.9974C32.9831 13.7371 32.9512 14.9262 32.1988 15.634L25.0256 22.3353L26.1925 23.6105C27.2509 24.6498 28.0575 24.4904 29.2753 24.5L29.2658 24.5095C30.4932 24.5319 31.7875 25.077 32.8683 26.1705C34.6281 27.9495 35.9097 31.4468 35.9097 31.4468C35.9639 31.5424 35.9416 31.6731 35.8555 31.7688V31.7656Z" fill="#161616"/></svg>
+      </a>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+      <nav>
+        <div class="nav-links" id="navLinks">
+          <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+          <div class="nav-item"><a href="#" class="nav-link" role="button" aria-expanded="false">PRODUCT <span class="arrow">▾</span></a><div class="nav-dropdown nav-dropdown--wide"><div class="dropdown-col"><div class="dropdown-col-title">Ordering</div><a href="#" class="dropdown-link">Online Ordering <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Branded Mobile Apps <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Website Builder <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Marketplace <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Discovery Network <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">QR Code Ordering <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Catering <span class="dl-arrow">→</span></a></div><div class="dropdown-col"><div class="dropdown-col-title">Marketing</div><a href="#" class="dropdown-link">Email & SMS <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Automated Campaigns <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Segmentation <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Rewards Program <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Revenue Reporting <span class="dl-arrow">→</span></a></div><div class="dropdown-col"><div class="dropdown-col-title">Operations</div><a href="#" class="dropdown-link">POS Integration <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Order Aggregation <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Menu Management <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Fraud Protection <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Smart Delivery <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Dashboard <span class="dl-arrow">→</span></a></div></div></div>
+          <div class="nav-item"><a href="#" class="nav-link" role="button" aria-expanded="false">INTEGRATIONS <span class="arrow">▾</span></a><div class="nav-dropdown nav-dropdown--med"><div class="dropdown-col"><div class="dropdown-col-title">POS Systems</div><a href="#" class="dropdown-link">Toast <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Square <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Clover <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Revel <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Lightspeed <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Skytab <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">See All 20+ <span class="dl-arrow">→</span></a></div><div class="dropdown-col"><div class="dropdown-col-title">Delivery & Discovery</div><a href="#" class="dropdown-link">DoorDash <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Uber Eats <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Grubhub <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Google <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Apple Maps <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Yelp <span class="dl-arrow">→</span></a></div></div></div>
+          <a href="#" class="nav-link-plain">PRICING</a>
+          <div class="nav-item"><a href="#" class="nav-link" role="button" aria-expanded="false">RESOURCES <span class="arrow">▾</span></a><div class="nav-dropdown"><div class="dropdown-col-title">Learn & Grow</div><a href="#" class="dropdown-link">Blog <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Restaurant Guides <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Restaurant Marketing <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">SEO for Restaurants <span class="dl-arrow">→</span></a><div class="dropdown-divider"></div><div class="dropdown-col-title">Customer Stories</div><a href="#" class="dropdown-link">Case Studies <span class="dl-arrow">→</span></a><div class="dropdown-divider"></div><div class="dropdown-col-title">Support</div><a href="#" class="dropdown-link">Restaurant Support <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Diner Support <span class="dl-arrow">→</span></a></div></div>
+          <div class="nav-item"><a href="#" class="nav-link" role="button" aria-expanded="false">COMPANY <span class="arrow">▾</span></a><div class="nav-dropdown"><div class="dropdown-col-title">About</div><a href="#" class="dropdown-link">Why ChowNow <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">About Us <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Our Reviews <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Careers <span class="dl-arrow">→</span></a><div class="dropdown-divider"></div><div class="dropdown-col-title">Partners & Contact</div><a href="#" class="dropdown-link">Our Partners <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Contact Us <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Refer a Restaurant <span class="dl-arrow">→</span></a><a href="#" class="dropdown-link">Become a Partner <span class="dl-arrow">→</span></a></div></div>
+          <a href="#" class="nav-link-plain">Login</a>
+          <a href="#demo-form" class="nav-cta">BOOK A DEMO</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="char-sep" data-char=" * " id="header-sep"></div>
+</header>
+
+<div id="content">
+
+  <section class="hero-section">
+    <div class="container-fluid">
+      <div class="hero-inner">
+        <div class="hero-left">
+          <h2>Take Control of<br>Every Order,<br>Every Customer,<br>Every Channel</h2>
+          <p class="hero-desc">ChowNow fights for the success of independent restaurants so you can grow your revenue, build relationships, and run your business on your own terms.</p>
+          <a href="#demo-form" class="hero-btn">BOOK A DEMO</a>
+        </div>
+        <div class="hero-right">
+          <div class="hero-image-wrap">
+            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=840&h=1120&fit=crop&crop=center" alt="Restaurant interior">
+            <div class="hero-image-badge"><div class="badge-dot"></div><span>2,400+ orders today</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonial-box-section">
+    <div class="container-fluid">
+      <div class="testimonial-box reveal">
+        <div class="testimonial-text"><h3>"Last year we sold about $300,000 just through ChowNow alone."</h3><div class="char-sep1" data-char=" * "></div><p class="attr">— Andre Angles, Thai District</p></div>
+        <div class="testimonial-img"><img src="https://picsum.photos/seed/review-stack-cn/220/140.jpg" alt="ChowNow reviews" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="platform-section">
+    <div class="char-sep" data-char=" * "></div>
+    <div class="container-fluid">
+      <div class="platform-top reveal"><h3>One Unified Platform</h3><p>ChowNow combines ordering, marketing, and operations into one platform so you can grow revenue, build relationships, and run your business on your terms.</p></div>
+      <div class="platform-grid">
+        <div class="platform-card reveal"><div class="card-img" style="background-image:url('https://picsum.photos/seed/commerce-cn/600/400.jpg');"></div><h3 class="card-title">Ordering</h3><hr><h3 class="card-sub">Own every order.<br>Keep more of what you earn.</h3><ul><li>Online Ordering Website</li><li>Branded Mobile App</li><li>ChowNow Marketplace</li><li>Discovery Network — Google &amp; 8 More</li><li>QR Code Ordering for Dine-In</li><li>Catering</li></ul><a href="#" class="learn-more">Learn More →</a></div>
+        <div class="platform-card reveal"><div class="card-img" style="background-image:url('https://picsum.photos/seed/marketing-cn/600/400.jpg');"></div><h3 class="card-title">Marketing</h3><hr><h3 class="card-sub">Turn every order and guest<br>interaction into repeat revenue.</h3><ul><li>Email &amp; SMS Outreach</li><li>Automated &amp; On-Demand Campaigns</li><li>Behavior Based Segmentation</li><li>Expanded Reach — Online &amp; In-Store</li><li>Performance Reporting Tied to Revenue</li><li>Loyalty and Rewards Program</li></ul><a href="#" class="learn-more">Learn More →</a></div>
+        <div class="platform-card reveal"><div class="card-img" style="background-image:url('https://picsum.photos/seed/operations-cn/600/400.jpg');"></div><h3 class="card-title">Operations</h3><hr><h3 class="card-sub">Power your restaurant<br>from one place.</h3><ul><li>POS Integration</li><li>Direct &amp; Third-Party Order Aggregation</li><li>Centralized Menu Management</li><li>100% Chargeback &amp; Fraud Protection</li><li>Smart Delivery Management</li><li>One Performance Dashboard</li></ul><a href="#" class="learn-more">Learn More →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="logo-slider-section">
+    <div class="char-sep" data-char=" * "></div>
+    <div class="container-fluid">
+      <div class="logo-slider-heading reveal"><h2>20+ POS Integrations to Fit Your Existing Workflow</h2></div>
+      <div class="slider-outer"><div class="slider-track" id="logoSliderTrack">
+        <div class="slider-card"><span class="logo-placeholder">Toast</span></div>
+        <div class="slider-card"><span class="logo-placeholder">Square</span></div>
+        <div class="slider-card"><span class="logo-placeholder">Revel</span></div>
+        <div class="slider-card"><span class="logo-placeholder">Clover</span></div>
+        <div class="slider-card"><span class="logo-placeholder">Lightspeed</span></div>
+        <div class="slider-card"><span class="logo-placeholder">POSitouch</span></div>
+        <div class="slider-card"><span class="logo-placeholder">Skytab</span></div>
+        <div class="slider-card"><span class="logo-placeholder">Genius</span></div>
+      </div></div>
+      <div class="slider-nav"><button id="logoPrev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button><button id="logoNext" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button></div>
+    </div>
+  </section>
+
+  <section class="case-studies-section">
+    <div class="container-fluid">
+      <div class="case-studies-heading reveal"><h2>See How Restaurants Grow with ChowNow</h2></div>
+      <div class="slider-outer"><div class="cs-track" id="csSliderTrack">
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/ollies-cn/600/340.jpg');"></div><h3>Ollie's | New York <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">$2M</div><div class="cs-stat-text">Saved in commission<br>fees annually</div></div></a>
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/renegade-cn/600/340.jpg');"></div><h3>Renegade Burrito | Denver <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">167%</div><div class="cs-stat-text">Increase in<br>average orders</div></div></a>
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/sushizen-cn/600/340.jpg');"></div><h3>Sushi-Zen | Arlington <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">$2.5M</div><div class="cs-stat-text">In total<br>sales</div></div></a>
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/ingrained-cn/600/340.jpg');"></div><h3>ingrained | Chicago <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">$76K+</div><div class="cs-stat-text">In direct<br>sales</div></div></a>
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/4top-cn/600/340.jpg');"></div><h3>4Top Hospitality <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">$288K</div><div class="cs-stat-text">Saved in commission<br>fees annually</div></div></a>
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/emporium-cn/600/340.jpg');"></div><h3>Emporium Thai | LA <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">$68K</div><div class="cs-stat-text">Saved in<br>Commission Fees</div></div></a>
+        <a href="#" class="cs-card"><div class="cs-card-img" style="background-image:url('https://picsum.photos/seed/rendezvous-cn/600/340.jpg');"></div><h3>Rendezvous | Memphis <span class="arrow-r">→</span></h3><div class="cs-stat"><div class="cs-stat-num">$98K</div><div class="cs-stat-text">Saved in commission<br>fees annually</div></div></a>
+      </div></div>
+      <div class="slider-nav"><button id="csPrev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button><button id="csNext" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button></div>
+    </div>
+  </section>
+
+  <section class="review-section">
+    <div class="container-fluid">
+      <div class="review-bg reveal" style="background-image:url('https://picsum.photos/seed/thai-food-cn/1400/600.jpg');">
+        <div class="review-inner">
+          <div class="review-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#fff"/></svg></div>
+          <div class="review-stars"><span></span><span></span><span></span><span></span><span></span></div>
+          <blockquote>"ChowNow is the best option in our opinion. With their excellent customer service, integration with leading POS systems, and help with marketing and promotions, you've got an unbeatable combination."</blockquote>
+          <div class="char-sep review-sep" data-char=" * " style="color:rgba(255,255,255,.35);"></div>
+          <div class="review-author"><a href="#">— Steve Capellini, Atchana's Homegrown Thai <svg width="11" height="11" viewBox="0 0 14 13" fill="none"><path d="M13.5891 6.35622L7.50434 0.274327C7.42535 0.195341 7.29559 0.195341 7.2166 0.274327L6.60729 0.883646C6.5283 0.962632 6.5283 1.09239 6.60729 1.17138L11.3041 5.8682H0.703115C0.590278 5.8682 0.5 5.95847 0.5 6.07131V6.93451C0.5 7.04735 0.590278 7.13762 0.703115 7.13762H11.2985L6.60729 11.8288C6.5283 11.9078 6.5283 12.0375 6.60729 12.1165L7.2166 12.7258C7.29559 12.8048 7.42535 12.8048 7.50434 12.7258L13.5891 6.64114C13.668 6.56215 13.668 6.43239 13.5891 6.3534V6.35622Z" fill="#fff"/></svg></a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section" id="demo-form">
+    <div class="container-fluid">
+      <div class="form-outer reveal">
+        <div class="form-left"><h2>Let's Take Your Revenue &amp; Relationships Back</h2><p>Get a quick, personalized walkthrough built for your restaurant.</p></div>
+        <div class="form-right">
+          <div class="form-card">
+            <form id="demoForm" onsubmit="return handleFormSubmit(event)">
+              <div class="form-row"><div class="form-group"><label>First Name</label><input type="text" required placeholder="First name" autocomplete="given-name"></div><div class="form-group"><label>Last Name</label><input type="text" required placeholder="Last name" autocomplete="family-name"></div></div>
+              <div class="form-group"><label>Work Email</label><input type="email" required placeholder="you@restaurant.com" autocomplete="email"></div>
+              <div class="form-group"><label>Restaurant Name</label><input type="text" required placeholder="Your restaurant" autocomplete="organization"></div>
+              <div class="form-group"><label>Monthly Orders</label><select><option value="">Select range</option><option>0 – 100</option><option>100 – 500</option><option>500 – 1,000</option><option>1,000+</option></select></div>
+              <button type="submit" class="submit-btn">Book A Demo</button>
+              <div class="form-disclaimer">This site is protected by reCAPTCHA and the Google <a href="#">Privacy Policy</a> and <a href="#">Terms of Service</a> apply.</div>
+            </form>
+            <div id="formThankYou" style="display:none;text-align:center;padding:2rem 0;"><h3 style="font-size:1.4rem;margin-bottom:.8rem;">Thank you!</h3><p>We'll be in touch shortly.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="char-sep" data-char=" * "></div>
+    <div class="container-fluid">
+      <div class="faq-heading reveal"><h3>FAQs</h3></div>
+      <div class="faq-group">
+        <div class="faq-card"><div class="faq-header"><button>Does ChowNow charge commissions?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>ChowNow customers can take unlimited commission-free orders directly from their website, branded mobile app, our marketplace app, and discovery channels across the web with Profit Protector enabled.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>Does ChowNow integrate with my existing POS systems?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>ChowNow orders integrate with leading POS systems including Toast, Square, Revel, Clover, and more.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>What is ChowNow's fraud and chargeback policy?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>We offer full credit card fraud and chargeback protection, without any limits. If your restaurant is subject to fraud, we cover the costs. If you get a chargeback, we cover it—no questions asked.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>What happens to my customer data?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>Your diners, your data. Restaurants get full access to diner ordering data and contact information.</p><ul><li>Retarget diners with automated emails</li><li>Identify your most valuable customers</li><li>Pinpoint your most popular ordering channels</li><li>Optimize your menu for upsells</li></ul><p>We comply with all data processing laws and do not sell data to third-parties.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>What kind of customer support do you offer?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>Our restaurant partners get expert guidance and 24/7 access to our award-winning customer support team via phone, chat, and text.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>Can I get ChowNow if I already use other third party delivery apps?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>Yes! ChowNow helps you keep more profits on every order. Our consolidation tools let you streamline 1st and 3rd party ordering, manage menu updates, and get analytics in one place.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>Do I need to already have a website for my restaurant?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>No! Our experts will build, optimize, and launch a branded website for you if you don't have one.</p></div></div></div>
+        <div class="faq-card"><div class="faq-header"><button>Will my site be optimized for SEO?</button><div class="faq-icon"></div></div><div class="faq-body"><div class="faq-body-inner"><p>Yes! Our website templates come with built-in SEO features that help maximize your visibility on search engines.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="f3-footer-wrap">
+  <div class="container-fluid">
+    <div class="char-sep" data-char=" * "></div>
+    <footer class="f3">
+      <div class="f3__sitemap">
+        <div class="f3__col"><h2 class="f3__col-title">Product</h2><div class="f3__two"><div><div class="f3__widget-heading">Ordering</div><ul><li><a href="#">Online Ordering</a></li><li><a href="#">Branded Mobile Apps</a></li><li><a href="#">Website Builder</a></li><li><a href="#">Marketplace</a></li><li><a href="#">Discovery Network</a></li><li><a href="#">Catering</a></li><li><a href="#">QR Code Ordering</a></li></ul></div><div class="f3__stack-right"><div class="f3__widget-heading">Marketing</div><ul><li><a href="#">Email &amp; Text Marketing</a></li><li><a href="#">Rewards Program</a></li></ul><div class="f3__widget-heading" style="margin-top:1rem;">Operations</div><ul><li><a href="#">Flex Delivery</a></li><li><a href="#">Order Aggregation</a></li><li><a href="#">Advanced Reporting</a></li></ul></div></div></div>
+        <div class="f3__col"><h2 class="f3__col-title">Integrations</h2><div class="f3__two"><div><div class="f3__widget-heading">POS Integrations</div><ul><li><a href="#">Clover</a></li><li><a href="#">Toast</a></li><li><a href="#">Square</a></li><li><a href="#">Revel</a></li><li><a href="#">Skytab</a></li><li><a href="#">See all 20+</a></li></ul></div><div class="f3__stack-right"><div class="f3__widget-heading">Delivery Apps</div><ul><li><a href="#">DoorDash</a></li><li><a href="#">UberEats</a></li><li><a href="#">Grubhub</a></li></ul><div class="f3__widget-heading" style="margin-top:1rem;">Discovery</div><ul><li><a href="#">Google</a></li><li><a href="#">Apple Maps</a></li><li><a href="#">Yelp</a></li></ul></div></div></div>
+        <div class="f3__col"><h2 class="f3__col-title">Resources</h2><div class="f3__widget-heading">Learn &amp; Grow</div><ul><li><a href="#">Blog</a></li><li><a href="#">Restaurant Guides</a></li><li><a href="#">Restaurant Marketing</a></li><li><a href="#">SEO for Restaurants</a></li></ul><div class="f3__widget-heading" style="margin-top:1rem;">Customer Stories</div><ul><li><a href="#">Case Studies</a></li></ul><div class="f3__widget-heading" style="margin-top:1rem;">Support</div><ul><li><a href="#">Restaurant Support</a></li><li><a href="#">Diner Support</a></li></ul></div>
+        <div class="f3__col"><h2 class="f3__col-title">Company</h2><div class="f3__widget-heading">About</div><ul><li><a href="#">Why ChowNow</a></li><li><a href="#">About Us</a></li><li><a href="#">Our Reviews</a></li><li><a href="#">Careers</a></li></ul><div class="f3__widget-heading" style="margin-top:1rem;">Partners &amp; Contact</div><ul><li><a href="#">Our Partners</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Refer a Restaurant</a></li><li><a href="#">Become a Partner</a></li><li><a href="tel:1-888-707-2469">1-888-707-2469</a></li></ul></div>
+      </div>
+      <div class="f3__bar">
+        <div class="f3__bar-left"><svg width="120" height="32" viewBox="0 0 200 51" fill="none"><circle cx="23" cy="23" r="18" fill="#f5f5f5"/><path d="M65.5 34.9C70.5 34.9 74.1 32.2 75.2 27.8L71.4 27C70.7 29.9 68.6 31.6 65.5 31.6C61.4 31.6 58.3 28.7 58.3 23.4C58.3 18.1 61.4 15.2 65.5 15.2C68.6 15.2 70.9 17 71.5 20L75.2 19.2C74.4 14.8 70.7 11.9 65.5 11.9C59.8 11.9 54.5 15.7 54.5 23.4C54.5 31 59.7 34.9 65.5 34.9Z" fill="#161616"/><path d="M77.7 34.6H81.2V27.6C81.2 23.7 82.8 21.3 85.5 21.3C87.7 21.3 89 22.7 89 24.8V34.6H92.5V24C92.5 20.5 90.1 18.2 86.5 18.2C84.2 18.2 82.3 19.2 81.2 21.2V11.9H77.7V34.6Z" fill="#161616"/></svg></div>
+        <div class="f3__bar-right"><a href="#">Pricing</a><a href="#">Login</a><a href="#demo-form" class="f-btn">Book A Demo</a></div>
+      </div>
+      <div class="char-sep" data-char=" ~ " style="margin:.4rem 0;"></div>
+      <div class="f3__legal"><div class="f3__copyright">© 2026 ChowNow. All Rights Reserved.</div><div class="f3__legal-links"><a href="#">Refund Policy</a><a href="#">Terms</a><a href="#">Privacy Policy</a><a href="#">CA Privacy Notice</a><a href="#">Do Not Sell Request</a></div></div>
+    </footer>
+  </div>
+</div>
+
+<script>
+function fillCharSeps(){document.querySelectorAll('.char-sep,.char-sep1').forEach(function(el){var ch=el.getAttribute('data-char')||' * ',p=el.closest('.container-fluid')||el.parentElement,pw=p?p.clientWidth:window.innerWidth,s=document.createElement('span');s.style.cssText='visibility:hidden;white-space:nowrap;position:absolute;font:inherit;font-size:inherit;letter-spacing:inherit;';s.textContent=ch;el.appendChild(s);var cw=s.getBoundingClientRect().width||8;s.remove();var n=Math.max(0,Math.floor(pw/cw));el.innerHTML='';var inner=document.createElement('div');inner.className='char-sep-inner';inner.style.whiteSpace='nowrap';inner.textContent=ch.repeat(n);el.appendChild(inner)})}fillCharSeps();window.addEventListener('resize',fillCharSeps);
+
+var header=document.getElementById('header');
+window.addEventListener('scroll',function(){header.classList.toggle('scrolled',window.scrollY>10)},{passive:true});
+
+var mobileBtn=document.getElementById('mobileMenuBtn'),closeBtn=document.getElementById('mobileCloseBtn'),navLinksEl=document.getElementById('navLinks'),overlay=document.getElementById('mobileOverlay'),menuOpen=false,scrollY=0;
+function openMenu(){scrollY=window.scrollY;menuOpen=true;document.body.classList.add('menu-open');document.body.style.top='-'+scrollY+'px';navLinksEl.classList.add('open');overlay.classList.add('active');mobileBtn.classList.add('active')}
+function closeMenu(){menuOpen=false;document.body.classList.remove('menu-open');document.body.style.top='';window.scrollTo(0,scrollY);navLinksEl.classList.remove('open');overlay.classList.remove('active');mobileBtn.classList.remove('active');document.querySelectorAll('.nav-item.open').forEach(function(i){i.classList.remove('open');var b=i.querySelector('.nav-link');if(b)b.setAttribute('aria-expanded','false')})}
+mobileBtn.addEventListener('click',function(){menuOpen?closeMenu():openMenu()});
+closeBtn.addEventListener('click',closeMenu);
+overlay.addEventListener('click',closeMenu);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+document.querySelectorAll('.nav-item > .nav-link').forEach(function(link){
+  link.addEventListener('click',function(e){e.preventDefault();var item=this.parentElement,wasOpen=item.classList.contains('open');document.querySelectorAll('.nav-item.open').forEach(function(i){i.classList.remove('open');var b=i.querySelector('.nav-link');if(b)b.setAttribute('aria-expanded','false')});if(!wasOpen){item.classList.add('open');this.setAttribute('aria-expanded','true')}});
+});
+document.addEventListener('click',function(e){if(!e.target.closest('.nav-item')&&window.innerWidth>1023){document.querySelectorAll('.nav-item.open').forEach(function(i){i.classList.remove('open');var b=i.querySelector('.nav-link');if(b)b.setAttribute('aria-expanded','false')})}});
+navLinksEl.querySelectorAll('.nav-link-plain,.nav-cta').forEach(function(el){el.addEventListener('click',function(){if(window.innerWidth<=1023)closeMenu()})});
+navLinksEl.querySelectorAll('.dropdown-link').forEach(function(el){el.addEventListener('click',function(){if(window.innerWidth<=1023)closeMenu()})});
+
+function createSlider(trackId,prevId,nextId,baseVis){
+  var track=document.getElementById(trackId),prevBtn=document.getElementById(prevId),nextBtn=document.getElementById(nextId);
+  if(!track||!prevBtn||!nextBtn)return;
+  var idx=0,cards=track.children,startX=0,startIdx=0,swiping=false,dir=0;
+  function vis(){var w=window.innerWidth;if(w<=374)return 2;if(w<=639)return 2;if(w<=767)return Math.min(baseVis,2);if(w<=1099)return Math.min(baseVis,3);return baseVis}
+  function maxI(){return Math.max(0,cards.length-vis())}
+  function slide(){var c=cards[0];if(!c)return;var g=parseFloat(getComputedStyle(track).gap)||20;track.style.transform='translateX('+(-idx*(c.offsetWidth+g))+'px)'}
+  prevBtn.addEventListener('click',function(){idx=Math.max(0,idx-1);slide()});
+  nextBtn.addEventListener('click',function(){idx=Math.min(maxI(),idx+1);slide()});
+  window.addEventListener('resize',function(){idx=Math.min(idx,maxI());slide()});
+  track.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startIdx=idx;swiping=true;dir=0},{passive:true});
+  track.addEventListener('touchmove',function(e){if(!swiping)return;var dx=e.touches[0].clientX-startX;if(dx>10)dir=1;else if(dx<-10)dir=-1},{passive:true});
+  track.addEventListener('touchend',function(){if(!swiping)return;swiping=false;if(dir===1)idx=Math.max(0,startIdx-1);else if(dir===-1)idx=Math.min(maxI(),startIdx+1);slide()},{passive:true});
+  slide();
+}
+createSlider('logoSliderTrack','logoPrev','logoNext',5);
+createSlider('csSliderTrack','csPrev','csNext',3);
+
+document.querySelectorAll('.faq-card .faq-header button').forEach(function(btn){
+  btn.addEventListener('click',function(){var card=this.closest('.faq-card'),isOpen=card.classList.contains('open');document.querySelectorAll('.faq-card.open').forEach(function(c){c.classList.remove('open')});if(!isOpen)card.classList.add('open')});
+});
+
+var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+
+function handleFormSubmit(e){e.preventDefault();document.getElementById('demoForm').style.display='none';document.getElementById('formThankYou').style.display='block';return false}
+</script>
+</body>
+</html>
